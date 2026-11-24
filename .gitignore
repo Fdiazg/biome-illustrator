@@ -1,0 +1,8 @@
+node_modules/
+dist/
+dist-site/
+out/
+.DS_Store
+*.log
+scripts/_tmp-*.ts
+*.tgz
