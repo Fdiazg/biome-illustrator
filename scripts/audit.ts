@@ -32,5 +32,5 @@ if (pieces.length) {
 console.log('')
 
 const failed = reports.filter((r) => !r.passes)
-console.log(`${reports.length - failed.length}/${reports.length} combinaciones sujeto × formato y motivos pasan el gate`)
+console.log(`Quality gate: ${reports.length - failed.length}/${reports.length} passed (subject × format and garden pieces)`)
 if (failed.length) process.exitCode = 1

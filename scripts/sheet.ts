@@ -39,7 +39,7 @@ function cell(subject: SubjectId, seed: number, format: FormatId): string {
   const width = format === 'wide' ? 520 : 240
   return (
     `<figure class="cell">` +
-    `<img src="${name}" width="${width}" alt="${subject} semilla ${seed}">` +
+    `<img src="${name}" width="${width}" alt="${subject}, seed ${seed}">` +
     `<figcaption>${subject} · ${seed}</figcaption>` +
     `</figure>`
   )
@@ -48,14 +48,14 @@ function cell(subject: SubjectId, seed: number, format: FormatId): string {
 function row(subject: SubjectId, format: FormatId): string {
   const def = SUBJECTS[subject]
   const report = auditSubject(subject, { seeds: SEEDS, format })
-  const mark = report.passes ? 'pasa' : 'falla'
+  const mark = report.passes ? 'pass' : 'fail'
   const cells = SEEDS.map((seed) => cell(subject, seed, format)).join('')
   return (
     `<section class="row">` +
     `<header>` +
     `<h2>${def.latin}</h2>` +
     `<p>${subject} · ${def.family} · ${def.short}</p>` +
-    `<p class="gate ${report.passes ? 'ok' : 'bad'}">${mark} · ${report.paths} trazos · ${report.tones} tonos · ${(report.variation * 100).toFixed(1)}% varía · ${fmt(format).short}</p>` +
+    `<p class="gate ${report.passes ? 'ok' : 'bad'}">${mark} · ${report.paths} paths · ${report.tones} tones · ${(report.variation * 100).toFixed(1)}% variation · ${fmt(format).short}</p>` +
     `</header>` +
     `<div class="cells">${cells}</div>` +
     `</section>`
@@ -69,7 +69,7 @@ for (const subject of SUBJECT_ORDER) {
 }
 
 // format comparison: the same subject and the same seed on each canvas
-sections.push(`<h1 class="divider">el mismo motivo en cada formato</h1>`)
+sections.push(`<h1 class="divider">Same subject in every format</h1>`)
 for (const subject of SUBJECT_ORDER) {
   const def = SUBJECTS[subject]
   const cells = def.formats.map((format) => cell(subject, 4821, format)).join('')
@@ -82,10 +82,10 @@ for (const subject of SUBJECT_ORDER) {
 }
 
 const html = `<!doctype html>
-<html lang="es">
+<html lang="en">
 <head>
 <meta charset="utf-8">
-<title>biome · hoja de contactos</title>
+<title>biome-illustrator · contact sheet</title>
 <style>
   :root { color-scheme: light; }
   * { box-sizing: border-box; }
@@ -107,11 +107,11 @@ const html = `<!doctype html>
 </style>
 </head>
 <body>
-<h1>biome · hoja de contactos</h1>
+<h1>biome-illustrator · contact sheet</h1>
 ${sections.join('\n')}
 </body>
 </html>`
 
 writeFileSync(join(outDir, 'index.html'), html, 'utf8')
-console.log(`hoja de contactos: ${join(outDir, 'index.html')}`)
-console.log(`${SUBJECT_ORDER.length} sujetos · ${SEEDS.length} semillas · formatos de banda incluidos`)
+console.log(`Contact sheet: ${join(outDir, 'index.html')}`)
+console.log(`${SUBJECT_ORDER.length} subjects · ${SEEDS.length} seeds · all formats`)

@@ -69,15 +69,15 @@ for (const kind of MOTIF_PIECES) {
   }
 }
 if (neutralBroken.length) {
-  console.log(`${neutralBroken.length} entradas cambian con growth: 1 / colors: 'hex'`)
-  for (const key of neutralBroken.slice(0, 10)) console.log(`  neutro   ${key}`)
+  console.log(`${neutralBroken.length} entries change with neutral options (growth: 1, colors: 'hex')`)
+  for (const key of neutralBroken.slice(0, 10)) console.log(`  neutral  ${key}`)
   process.exitCode = 1
 }
 
 const total = Object.keys(current).length
 if (update || !existsSync(file)) {
   writeFileSync(file, JSON.stringify(current, null, 1) + '\n', 'utf8')
-  console.log(`${total} entradas escritas en ${file}`)
+  console.log(`Wrote ${total} entries to ${file}`)
   process.exit(0)
 }
 
@@ -93,9 +93,9 @@ for (const [key, hash] of Object.entries(saved)) {
 }
 for (const key of Object.keys(current)) if (!(key in saved)) added.push(key)
 
-console.log(`${same}/${Object.keys(saved).length} entradas idénticas`)
-if (added.length) console.log(`${added.length} entradas nuevas (no están en el manifiesto)`)
-for (const key of changed.slice(0, 20)) console.log(`  cambió   ${key}`)
-for (const key of missing.slice(0, 20)) console.log(`  falta    ${key}`)
-if (changed.length > 20) console.log(`  … y ${changed.length - 20} más`)
+console.log(`Snapshot: ${same}/${Object.keys(saved).length} entries unchanged`)
+if (added.length) console.log(`${added.length} new entries (not in the snapshot yet; run with --update)`)
+for (const key of changed.slice(0, 20)) console.log(`  changed  ${key}`)
+for (const key of missing.slice(0, 20)) console.log(`  missing  ${key}`)
+if (changed.length > 20) console.log(`  … and ${changed.length - 20} more`)
 if (changed.length || missing.length) process.exitCode = 1

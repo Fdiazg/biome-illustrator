@@ -40,5 +40,5 @@ for (const subject of SUBJECT_ORDER) {
   }
 }
 
-console.log(`${count} láminas en ${outDir}`)
-console.log(`paletas: ${PALETTE_ORDER.map((id) => PALETTES[id].name).join(', ')}`)
+console.log(`Exported ${count} plates to ${outDir}`)
+console.log(`Palettes: ${PALETTE_ORDER.map((id) => PALETTES[id].name).join(', ')}`)

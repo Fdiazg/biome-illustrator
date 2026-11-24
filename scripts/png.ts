@@ -45,7 +45,7 @@ const flag = (name: string) => args.includes(`--${name}`)
 
 const subject = (read('subject') ?? 'grove') as SubjectId
 if (!SUBJECTS[subject]) {
-  console.error(`sujeto desconocido: ${subject}`)
+  console.error(`Unknown subject: ${subject}`)
   process.exit(1)
 }
 const def = SUBJECTS[subject]
@@ -81,7 +81,7 @@ const g = (v?: number) => (v === undefined ? '' : `-g${v}`)
 
 if (motif) {
   if (!MOTIF_SUBJECTS.includes(subject as MotifSubjectId)) {
-    console.error(`${subject} no es un motivo (${MOTIF_SUBJECTS.join(', ')})`)
+    console.error(`${subject} is not a motif subject (expected one of: ${MOTIF_SUBJECTS.join(', ')})`)
     process.exit(1)
   }
   for (const seed of seeds) {
@@ -98,7 +98,7 @@ if (motif) {
       }
       // at its own size (scale 1) unless a width is requested
       toPng(svg, display ?? Math.round(m.width), `motif-${subject}-${palette}-${seed}${g(growth)}${display ? `-d${display}` : ''}.png`, tint.paper)
-      console.log(`${subject} ${seed}${g(growth)}: ${m.width}×${m.height} px, pie (${m.anchor.x}, ${m.anchor.y})`)
+      console.log(`${subject} ${seed}${g(growth)}: ${m.width}×${m.height} px, anchor (${m.anchor.x}, ${m.anchor.y})`)
       count++
     }
   }
@@ -114,4 +114,4 @@ if (motif) {
     }
   }
 }
-console.log(`${count} PNG en ${outDir}`)
+console.log(`Rendered ${count} PNG files to ${outDir}`)

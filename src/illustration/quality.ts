@@ -167,21 +167,21 @@ export function auditSubject(subject: SubjectId, options: AuditOptions = {}): Qu
 
   const issues: string[] = []
   if (paths < def.quality.minPaths) {
-    issues.push(`${paths} trazos (mínimo ${def.quality.minPaths}): falta dibujo adentro`)
+    issues.push(`${paths} paths (min ${def.quality.minPaths}): not enough detail`)
   }
   if (tones < def.quality.minTones) {
-    issues.push(`${tones} tonos (mínimo ${def.quality.minTones}): falta jerarquía de color`)
+    issues.push(`${tones} tones (min ${def.quality.minTones}): no color hierarchy`)
   }
   if (variation < def.quality.minVariation) {
     issues.push(
-      `${(variation * 100).toFixed(1)}% de variación (mínimo ${(def.quality.minVariation * 100).toFixed(0)}%): la semilla no cambia la forma`,
+      `${(variation * 100).toFixed(1)}% variation (min ${(def.quality.minVariation * 100).toFixed(0)}%): the seed does not change the shape`,
     )
   }
 
   const minCoverage = def.quality.minCoverage
   if (minCoverage !== undefined && coverage < minCoverage) {
     issues.push(
-      `${(coverage * 100).toFixed(0)}% del lienzo (mínimo ${(minCoverage * 100).toFixed(0)}%): el dibujo no llena el formato`,
+      `${(coverage * 100).toFixed(0)}% coverage (min ${(minCoverage * 100).toFixed(0)}%): the drawing does not fill the format`,
     )
   }
 
@@ -216,14 +216,14 @@ export function auditAll(options: AuditOptions = {}): QualityReport[] {
 }
 
 export function formatReport(report: QualityReport): string {
-  const mark = report.passes ? 'PASA' : 'FALLA'
+  const mark = report.passes ? 'PASS' : 'FAIL'
   return [
     `${report.subject.padEnd(report.format === 'piece' ? 16 : 8)} ${report.format.padEnd(6)} ${mark.padEnd(5)}`,
-    `${String(report.paths).padStart(4)} trazos`,
-    `${String(report.pieces).padStart(3)} piezas`,
-    `${report.tones} tonos`,
-    `${(report.variation * 100).toFixed(1).padStart(5)}% varía`,
-    `${(report.coverage * 100).toFixed(0).padStart(3)}% lienzo`,
+    `${String(report.paths).padStart(4)} paths`,
+    `${String(report.pieces).padStart(3)} pieces`,
+    `${report.tones} tones`,
+    `${(report.variation * 100).toFixed(1).padStart(5)}% variation`,
+    `${(report.coverage * 100).toFixed(0).padStart(3)}% coverage`,
     report.issues.length ? `\n           · ${report.issues.join('\n           · ')}` : '',
   ].join('  ')
 }
@@ -249,13 +249,13 @@ export function auditPiece(kind: MotifPieceKind, options: Pick<AuditOptions, 'se
   const coverage = svgs.reduce((sum, svg) => sum + coverageOf(svg, W, H), 0) / svgs.length
 
   const issues: string[] = []
-  if (paths < gate.minPaths) issues.push(`${paths} trazos (mínimo ${gate.minPaths}): falta dibujo adentro`)
-  if (tones < gate.minTones) issues.push(`${tones} tonos (mínimo ${gate.minTones}): falta jerarquía de color`)
+  if (paths < gate.minPaths) issues.push(`${paths} paths (min ${gate.minPaths}): not enough detail`)
+  if (tones < gate.minTones) issues.push(`${tones} tones (min ${gate.minTones}): no color hierarchy`)
   if (variation < gate.minVariation) {
-    issues.push(`${(variation * 100).toFixed(1)}% de variación (mínimo ${(gate.minVariation * 100).toFixed(0)}%): la semilla no cambia la forma`)
+    issues.push(`${(variation * 100).toFixed(1)}% variation (min ${(gate.minVariation * 100).toFixed(0)}%): the seed does not change the shape`)
   }
   if (gate.minCoverage !== undefined && coverage < gate.minCoverage) {
-    issues.push(`${(coverage * 100).toFixed(0)}% del lienzo (mínimo ${(gate.minCoverage * 100).toFixed(0)}%): el dibujo no llena el lienzo`)
+    issues.push(`${(coverage * 100).toFixed(0)}% coverage (min ${(gate.minCoverage * 100).toFixed(0)}%): the drawing does not fill the canvas`)
   }
   return {
     subject: `piece:${kind}`,
