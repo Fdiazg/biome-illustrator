@@ -54,6 +54,30 @@ import { Illustration } from 'biome-illustrator/react'
 The component injects exactly the string returned by `renderIllustration`, so
 what you see and what you download are the same file.
 
+### Choosing a seed
+
+The seed is any integer; it picks the drawing, not its quality. A few ways to
+get one:
+
+```ts
+import { hashSeed } from 'biome-illustrator/core'
+
+// 1. Curated: browse seeds in the studio (`pnpm dev`) and keep the ones you like.
+const seed = 4821
+
+// 2. From a string: stable per page, post or user, with no list to maintain.
+const seed = hashSeed('my-blog-post-slug')
+
+// 3. Random: a different drawing on every load.
+const seed = Math.floor(Math.random() * 100_000)
+
+// 4. From the date: one drawing per day, the same for every visitor.
+const seed = hashSeed(new Date().toISOString().slice(0, 10))
+```
+
+When the seed is random and you want to recreate a drawing later, store it:
+every SVG carries it in its `data-seed` attribute.
+
 ## Features
 
 - **Seven subjects**: three botanicals (`flat`, `ink`, `line`), a tree

@@ -54,6 +54,30 @@ import { Illustration } from 'biome-illustrator/react'
 El componente inyecta exactamente el string de `renderIllustration`, así que
 lo que se ve y lo que se descarga son el mismo archivo.
 
+### Cómo elegir la semilla
+
+La semilla es cualquier entero: elige el dibujo, no su calidad. Algunas formas
+de conseguirla:
+
+```ts
+import { hashSeed } from 'biome-illustrator/core'
+
+// 1. Curada: recorre semillas en el estudio (`pnpm dev`) y guarda las que te gusten.
+const seed = 4821
+
+// 2. Desde un texto: estable por página, post o usuario, sin lista que mantener.
+const seed = hashSeed('slug-de-mi-post')
+
+// 3. Al azar: un dibujo distinto en cada carga.
+const seed = Math.floor(Math.random() * 100_000)
+
+// 4. Desde la fecha: un dibujo por día, el mismo para todos los visitantes.
+const seed = hashSeed(new Date().toISOString().slice(0, 10))
+```
+
+Si la semilla es al azar y quieres recuperar un dibujo después, guárdala:
+cada SVG la lleva en su atributo `data-seed`.
+
 ## Qué hay
 
 - **Siete sujetos**: tres botánicos (`flat`, `ink`, `line`), un árbol

@@ -68,7 +68,7 @@ export const SPECIMENS: Record<SpeciesId, SpeciesConfig> = {
   flat: {
     id: 'flat',
     latin: 'Solanum chartaceum',
-    note: 'hojas alternas, hábito erguido, corola pentámera',
+    note: 'alternate leaves, upright habit, five-petaled corolla',
     stem: { length: 0.86, lean: 0.05, wobble: 8, width: 3.0 },
     nodes: { from: 0.12, to: 0.9, spacing: [0.058, 0.076], mode: 'alternate' },
     leaf: {
@@ -109,7 +109,7 @@ export const SPECIMENS: Record<SpeciesId, SpeciesConfig> = {
   ink: {
     id: 'ink',
     latin: 'Papaver tremulum',
-    note: 'tallo grácil, hojas lanceoladas, corola tetrámera',
+    note: 'slender stem, lanceolate leaves, four-petaled corolla',
     stem: { length: 0.78, lean: 0.06, wobble: 16, width: 2.2 },
     nodes: { from: 0.04, to: 0.56, spacing: [0.095, 0.12], mode: 'alternate' },
     leaf: {
@@ -147,7 +147,7 @@ export const SPECIMENS: Record<SpeciesId, SpeciesConfig> = {
   line: {
     id: 'line',
     latin: 'Ramulus striatus',
-    note: 'hojas opuestas, limbo linear, nervadura estriada',
+    note: 'opposite leaves, linear blade, striate venation',
     stem: { length: 0.9, lean: 0.08, wobble: 26, width: 3 },
     nodes: { from: 0.04, to: 0.94, spacing: [0.1, 0.125], mode: 'opposite' },
     leaf: {

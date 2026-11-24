@@ -199,7 +199,7 @@ export function renderIllustration(opts: IllustrationOptions): string {
 
   const css = opts.animate ? animationCss(uid, scene) : ''
 
-  const title = `${subject.latin} — semilla ${seed}`
+  const title = `${subject.latin} — seed ${seed}`
 
   const dw = opts.displayWidth && opts.displayWidth > 0 ? opts.displayWidth : undefined
   const size = dw ? `width="${num(dw)}" height="${num((dw * H) / W)}"` : `width="${W}" height="${H}"`

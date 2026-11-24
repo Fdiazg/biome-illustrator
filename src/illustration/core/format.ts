@@ -22,7 +22,7 @@ export interface Format {
 export const FORMATS: Record<FormatId, Format> = {
   plate: {
     id: 'plate',
-    name: 'Lámina',
+    name: 'Plate',
     short: '620 × 780',
     width: 620,
     height: 780,
@@ -30,7 +30,7 @@ export const FORMATS: Record<FormatId, Format> = {
   },
   wide: {
     id: 'wide',
-    name: 'Banda',
+    name: 'Band',
     short: '1600 × 360',
     width: 1600,
     height: 360,
@@ -38,7 +38,7 @@ export const FORMATS: Record<FormatId, Format> = {
   },
   square: {
     id: 'square',
-    name: 'Cuadrado',
+    name: 'Square',
     short: '900 × 900',
     width: 900,
     height: 900,

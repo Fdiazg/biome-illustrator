@@ -53,7 +53,7 @@ export interface SkyConfig {
 export const SKY: SkyConfig = {
   id: 'cumulus',
   latin: 'Cumulus humilis',
-  note: 'nube de buen tiempo: base plana, cúpulas festoneadas, colas afinadas',
+  note: 'fair-weather cloud: flat base, scalloped domes, tapering tails',
   aspect: [0.34, 0.46],
   domes: [3, 6],
   spacing: [0.5, 0.68],

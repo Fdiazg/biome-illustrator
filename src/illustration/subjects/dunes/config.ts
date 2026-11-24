@@ -56,7 +56,7 @@ export interface DunesConfig {
 export const DUNES: DunesConfig = {
   id: 'dunes',
   latin: 'Litus quietum',
-  note: 'pliegues de tierra que se cruzan bajo una luz baja',
+  note: 'folds of land crossing under a low light',
   ampFar: 0.035,
   ampNear: 0.11,
   haze: 0.13,

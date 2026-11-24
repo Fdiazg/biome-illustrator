@@ -26,7 +26,7 @@ export interface Palette {
 export const PALETTES: Record<PaletteId, Palette> = {
   herbarium: {
     id: 'herbarium',
-    name: 'Herbario',
+    name: 'Herbarium',
     paper: '#EDE7D8',
     ink: '#191A17',
     accent: '#D9482A',
@@ -46,7 +46,7 @@ export const PALETTES: Record<PaletteId, Palette> = {
   },
   night: {
     id: 'night',
-    name: 'Noche',
+    name: 'Night',
     paper: '#182019',
     ink: '#EDE7D8',
     accent: '#E2582F',
@@ -69,7 +69,7 @@ export const PALETTES: Record<PaletteId, Palette> = {
   // alternate, sage the leaf shade and butter the flower.
   garden: {
     id: 'garden',
-    name: 'Jardín',
+    name: 'Garden',
     paper: '#F4F0E6',
     ink: '#2B2A28',
     accent: '#F2B38F',
@@ -80,7 +80,7 @@ export const PALETTES: Record<PaletteId, Palette> = {
   },
   'garden-night': {
     id: 'garden-night',
-    name: 'Jardín de noche',
+    name: 'Garden night',
     paper: '#1E2230',
     ink: '#EDE7D8',
     accent: '#C99A80',

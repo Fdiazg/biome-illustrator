@@ -222,7 +222,7 @@ export const GROVE_SPECIES: Record<GroveSpeciesId, GroveSpecies> = {
 export const GROVE = {
   id: 'grove' as const,
   latin: 'Quercus graphica',
-  note: 'tronco que se abre en horquillas, copa de racimos, pasto en la base',
+  note: 'forking trunk, crown of leaf clusters, grass at the base',
   /** height of the tree alone, as a fraction of the canvas */
   height: { plate: 0.74, square: 0.76 },
   leaf: {
