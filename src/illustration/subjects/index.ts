@@ -108,4 +108,13 @@ export const PIECE_GATES: Record<MotifPieceKind, QualityGate> = {
   hills: { minPaths: 9, minTones: 2, minVariation: 0.7, minCoverage: 0.7 },
   trail: { minPaths: 30, minTones: 2, minVariation: 0.7, minCoverage: 0.55 },
   lantern: { minPaths: 12, minTones: 3, minVariation: 0.7, minCoverage: 0.35 },
+  'cage-lantern': { minPaths: 25, minTones: 4, minVariation: 0.7, minCoverage: 0.3 },
+  boulder: { minPaths: 6, minTones: 3, minVariation: 0.7, minCoverage: 0.3 },
+  'stone-cluster': { minPaths: 40, minTones: 4, minVariation: 0.7, minCoverage: 0.38 },
+  'grass-clump': { minPaths: 12, minTones: 2, minVariation: 0.7, minCoverage: 0.4 },
+  bed: { minPaths: 15, minTones: 3, minVariation: 0.7, minCoverage: 0.45 },
+  sprig: { minPaths: 15, minTones: 1, minVariation: 0.7, minCoverage: 0.45 },
+  'cypress-group': { minPaths: 15, minTones: 2, minVariation: 0.7, minCoverage: 0.4 },
+  shrub: { minPaths: 6, minTones: 2, minVariation: 0.7, minCoverage: 0.5 },
+  'broad-tree': { minPaths: 8, minTones: 2, minVariation: 0.7, minCoverage: 0.55 },
 }

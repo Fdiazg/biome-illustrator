@@ -14,6 +14,7 @@ import { clamp, cubicPoint, lerp, num, type Pt } from '../../core/math'
 import { makeNoise, type Noise1D } from '../../core/noise'
 import { polyline, tapered, withOvershoot, wobble } from '../../core/path'
 import { createRng, type Rng } from '../../core/prng'
+import { moonMaria } from './details'
 
 /** Randomness + noise: the hand that draws a piece. */
 export interface Pen {
@@ -266,6 +267,12 @@ export interface MoonOptions {
   rimOpacity?: number
   /** tilt of the moon, radians. Default -0.3 */
   tilt?: number
+  /** a few flat patches (the maria) inside the lit part. Default false */
+  maria?: boolean
+  /** color of the maria. Default `ink` */
+  mariaColor?: string
+  /** opacity of the maria. Default 0.12 */
+  mariaOpacity?: number
 }
 
 export function moon(p: Pen, c: Pt, R: number, ink: string, fill: string, opts?: MoonOptions): string {
@@ -345,6 +352,7 @@ function phasedMoon(p: Pen, c: Pt, R: number, ink: string, fill: string, o: Moon
       shape.push(at(side * cosP * Math.cos(th) * r, Math.sin(th) * r))
     }
     out += `<path d="${polyline(shape, true)}" fill="${fill}" ${shift}/>`
+    if (o.maria) out += moonMaria(p, c, R, shape, o.mariaColor ?? ink, o.mariaOpacity ?? 0.12, ` ${shift}`)
   }
 
   // the unlit limb: a thin pale line, the whole circle at new moon

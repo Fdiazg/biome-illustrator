@@ -19,28 +19,28 @@ import { crest } from '../dunes/terrain'
 import type { Pen } from './pieces'
 
 /** Pen pressure: enters thin, settles, leaves thin; with a soft pulse. */
-const pressure = (noise: Noise1D, phase: number, attack = 0.35) => (t: number) =>
+export const pressure = (noise: Noise1D, phase: number, attack = 0.35) => (t: number) =>
   Math.pow(Math.sin(Math.PI * clamp(t, 0, 1)), attack) * (1 + 0.14 * noise(t * 5 + phase))
 
-const fillPath = (d: string, fill: string, extra = '') => `<path d="${d}" fill="${fill}"${extra}/>`
-const shift = (dx: number, dy: number) => ` transform="translate(${num(dx)} ${num(dy)})"`
-const alpha = (o: number) => (o < 1 ? ` opacity="${Math.round(Math.max(0, o) * 100) / 100}"` : '')
+export const fillPath = (d: string, fill: string, extra = '') => `<path d="${d}" fill="${fill}"${extra}/>`
+export const shift = (dx: number, dy: number) => ` transform="translate(${num(dx)} ${num(dy)})"`
+export const alpha = (o: number) => (o < 1 ? ` opacity="${Math.round(Math.max(0, o) * 100) / 100}"` : '')
 
 /** A closed ring drawn with the pen: overshoot where it closes, pressure along it. */
-function ring(p: Pen, pts: Pt[], weight: number, phase: number, overshoot: number): string {
+export function ring(p: Pen, pts: Pt[], weight: number, phase: number, overshoot: number): string {
   const line = withOvershoot(pts, overshoot, 0.5)
   const press = pressure(p.noise, phase, 0.3)
   return tapered(wobble(line, weight * 0.18, p.noise, 0.3, phase), (t) => weight * (0.3 + 0.7 * press(t)))
 }
 
 /** An open stroke with pressure. */
-function stroke(p: Pen, pts: Pt[], weight: number, phase: number, attack = 0.35): string {
+export function stroke(p: Pen, pts: Pt[], weight: number, phase: number, attack = 0.35): string {
   const press = pressure(p.noise, phase, attack)
   return tapered(wobble(pts, weight * 0.2, p.noise, 0.3, phase), (t) => weight * (0.2 + 0.8 * press(t)))
 }
 
 /** A curve from a to b through a bend (perpendicular, as a fraction of the length). */
-function bent(a: Pt, b: Pt, bend: number, n = 16): Pt[] {
+export function bent(a: Pt, b: Pt, bend: number, n = 16): Pt[] {
   const d = { x: b.x - a.x, y: b.y - a.y }
   const c1 = { x: a.x + d.x * 0.33 - d.y * bend, y: a.y + d.y * 0.33 + d.x * bend }
   const c2 = { x: a.x + d.x * 0.7 - d.y * bend * 0.6, y: a.y + d.y * 0.7 + d.x * bend * 0.6 }
@@ -49,7 +49,7 @@ function bent(a: Pt, b: Pt, bend: number, n = 16): Pt[] {
   return out
 }
 
-interface FlatLeaf {
+export interface FlatLeaf {
   base: Pt
   tip: Pt
   bend: number
@@ -58,7 +58,7 @@ interface FlatLeaf {
 }
 
 /** A leaf in flat fill, shifted off its line; with outline and midrib if `ink`. */
-function flatLeaf(p: Pen, o: FlatLeaf, fill: string, ink: string | null, weight: number, reg: Pt, veins = 0, fillAlpha = 1): string {
+export function flatLeaf(p: Pen, o: FlatLeaf, fill: string, ink: string | null, weight: number, reg: Pt, veins = 0, fillAlpha = 1): string {
   const phase = p.rng.next() * 12
   const spine = wobble(leafSpine(o.base, o.tip, o.bend, 30), weight * 0.25, p.noise, 0.3, phase)
   const geom = leafGeometry(spine, o.halfWidth, p.rng.range(-0.1, 0.1), o.profile)
