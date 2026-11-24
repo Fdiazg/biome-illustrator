@@ -116,6 +116,9 @@ function DiceIcon() {
 export function App() {
   const [state, setState] = useState<State>(readHash)
   const [draftSeed, setDraftSeed] = useState(String(state.seed))
+  // The variations strip hangs from this seed. Picking a variation only changes
+  // `state.seed`, so the strip stays put; a new seed (R, the input) moves it.
+  const [baseSeed, setBaseSeed] = useState(state.seed)
 
   const options: IllustrationOptions = useMemo(
     () => ({
@@ -144,7 +147,9 @@ export function App() {
   }, [state.seed, state.subject, state.palette, state.registration, state.format])
 
   const newSeed = useCallback(() => {
-    setState((s) => ({ ...s, seed: Math.floor(Math.random() * 90000) + 1000 }))
+    const seed = Math.floor(Math.random() * 90000) + 1000
+    setBaseSeed(seed)
+    setState((s) => ({ ...s, seed }))
   }, [])
 
   const pickSubject = useCallback((id: SubjectId) => {
@@ -170,22 +175,24 @@ export function App() {
 
   const commitSeed = () => {
     const next = Number.parseInt(draftSeed, 10)
-    if (Number.isFinite(next) && next > 0) setState((s) => ({ ...s, seed: next }))
-    else setDraftSeed(String(state.seed))
+    if (Number.isFinite(next) && next > 0) {
+      setBaseSeed(next)
+      setState((s) => ({ ...s, seed: next }))
+    } else setDraftSeed(String(state.seed))
   }
 
-  const variants = Array.from({ length: 8 }, (_, i) => state.seed + 11 * (i + 1) + 4)
+  const variants = [baseSeed, ...Array.from({ length: 8 }, (_, i) => baseSeed + 11 * (i + 1) + 4)]
 
   return (
     <div className="app">
       <header className="bar">
         <div className="brand">
-          <span className="brand-name">biome</span>
-          <span className="brand-tag">motor de ilustración generativa</span>
+          <span className="brand-name">biome-illustrator</span>
+          <span className="brand-tag">generative illustration engine</span>
         </div>
         <div className="bar-tools">
           <span className="seed-chip">
-            semilla <b>{state.seed}</b>
+            seed <b>{state.seed}</b>
           </span>
           <button className="btn" onClick={() => downloadSvg(options)}>
             <DownloadIcon /> SVG
@@ -200,13 +207,13 @@ export function App() {
         <aside className="rail">
           <div className="rail-scroll">
             <div className="rail-head">
-            <p className="eyebrow">lámina {meta.plate}</p>
+            <p className="eyebrow">plate {meta.plate}</p>
             <h1 className="latin">{subject.latin}</h1>
             <p className="note">{subject.note}</p>
           </div>
 
           <section className="group">
-            <h2 className="group-title">motivo</h2>
+            <h2 className="group-title">subject</h2>
             <div className="subject-list">
               {SUBJECT_ORDER.map((id) => {
                 const item = SUBJECTS[id]
@@ -241,7 +248,7 @@ export function App() {
           </section>
 
           <section className="group">
-            <h2 className="group-title">formato</h2>
+            <h2 className="group-title">format</h2>
             <div className="formats">
               {subject.formats.map((id) => {
                 const f = FORMATS[id]
@@ -263,7 +270,7 @@ export function App() {
           </section>
 
           <section className="group">
-            <h2 className="group-title">paleta</h2>
+            <h2 className="group-title">palette</h2>
             <div className="palettes">
               {PALETTE_ORDER.map((id) => {
                 const p = PALETTES[id]
@@ -274,7 +281,7 @@ export function App() {
                     type="button"
                     className={`palette${active ? ' is-active' : ''}`}
                     aria-pressed={active}
-                    aria-label={`Paleta ${p.name}`}
+                    aria-label={`Palette ${p.name}`}
                     title={p.name}
                     onClick={() => setState((s) => ({ ...s, palette: id }))}
                   >
@@ -289,7 +296,7 @@ export function App() {
           </section>
 
           <section className="group">
-            <h2 className="group-title">semilla</h2>
+            <h2 className="group-title">seed</h2>
             <div className="seed-row">
               <label className="seed-field">
                 <span className="seed-hash">#</span>
@@ -301,17 +308,17 @@ export function App() {
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') (e.target as HTMLInputElement).blur()
                   }}
-                  aria-label="Número de semilla"
+                  aria-label="Seed number"
                 />
               </label>
-              <button type="button" className="icon-btn" onClick={newSeed} aria-label="Semilla al azar" title="Semilla al azar (R)">
+              <button type="button" className="icon-btn" onClick={newSeed} aria-label="Random seed" title="Random seed (R)">
                 <DiceIcon />
               </button>
             </div>
           </section>
 
           <section className="group">
-            <h2 className="group-title">registro</h2>
+            <h2 className="group-title">registration</h2>
             <div className="range-row">
               <input
                 className="range"
@@ -323,7 +330,7 @@ export function App() {
                 onChange={(e) =>
                   setState((s) => ({ ...s, registration: Number(e.target.value) }))
                 }
-                aria-label="Desfase entre color y línea"
+                aria-label="Offset between color and line"
               />
               <span className="range-value">{state.registration.toFixed(1)}</span>
             </div>
@@ -331,7 +338,7 @@ export function App() {
 
           <section className="group toggles">
             <div className="toggle-row">
-              <span>animación</span>
+              <span>animation</span>
               <button
                 type="button"
                 role="switch"
@@ -339,11 +346,11 @@ export function App() {
                 className="switch"
                 onClick={() => setState((s) => ({ ...s, animate: !s.animate }))}
               >
-                <span className="sr-only">Animar la entrada</span>
+                <span className="sr-only">Animate the entrance</span>
               </button>
             </div>
             <div className="toggle-row">
-              <span>grano de papel</span>
+              <span>paper grain</span>
               <button
                 type="button"
                 role="switch"
@@ -351,14 +358,14 @@ export function App() {
                 className="switch"
                 onClick={() => setState((s) => ({ ...s, grain: !s.grain }))}
               >
-                <span className="sr-only">Textura de papel</span>
+                <span className="sr-only">Paper texture</span>
               </button>
             </div>
           </section>
           </div>
 
           <button type="button" className="cta" onClick={newSeed}>
-            Nueva semilla
+            New seed
             <kbd>R</kbd>
           </button>
         </aside>
@@ -386,7 +393,7 @@ export function App() {
             <figcaption className="plate-caption">
               <span className="cap-latin">{subject.latin}</span>
               <span>
-                semilla {meta.seed} · {palette.name.toLowerCase()} · {meta.format.toLowerCase()}
+                seed {meta.seed} · {palette.name.toLowerCase()} · {meta.format.toLowerCase()}
               </span>
             </figcaption>
           </figure>
@@ -394,15 +401,16 @@ export function App() {
       </div>
 
       <footer className="strip">
-        <span className="strip-label">variaciones</span>
+        <span className="strip-label">variations</span>
         <div className="strip-row">
           {variants.map((seed) => (
             <button
               key={seed}
               type="button"
-              className="thumb"
-              title={`Fijar semilla ${seed}`}
-              aria-label={`Fijar semilla ${seed}`}
+              className={seed === state.seed ? 'thumb is-active' : 'thumb'}
+              aria-pressed={seed === state.seed}
+              title={seed === baseSeed ? `Original seed ${seed}` : `Use seed ${seed}`}
+              aria-label={seed === baseSeed ? `Original seed ${seed}` : `Use seed ${seed}`}
               onClick={() => setState((s) => ({ ...s, seed }))}
             >
               <Illustration

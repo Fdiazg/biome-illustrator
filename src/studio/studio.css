@@ -678,6 +678,11 @@ button {
   box-shadow: 0 6px 12px -8px rgba(22, 24, 15, 0.5);
 }
 
+.thumb.is-active {
+  border-color: var(--ink);
+  box-shadow: 0 0 0 1px var(--ink);
+}
+
 .thumb .bi-fit,
 .thumb svg {
   width: 100%;
