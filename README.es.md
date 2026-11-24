@@ -89,7 +89,9 @@ cada SVG la lleva en su atributo `data-seed`.
   `garden-night`, o una propia.
 - **Motivos sueltos**: una planta recortada a su caja, con su punto de apoyo.
 - **Piezas de jardín**: sol, luna con fase, matas, margarita, piedra, mata,
-  hoja grande, ciprés, árbol redondo, cerros, camino y farol.
+  hoja grande, ciprés, árbol redondo, cerros, camino y farol; un farol de vela
+  con marco, cantos rodados y grupos de piedras, matas de pasto, un cantero,
+  una rama botánica, grupos de cipreses, arbustos y un árbol ancho.
 - **Crecimiento**: la misma planta de brote a flor (`growth`).
 - **Color por variables CSS**, para teñir en vivo sin volver a dibujar.
 - **Pluma según el tamaño final** y **registro** configurable entre color y
@@ -147,22 +149,45 @@ con `width` y `height`). Las que se paran tienen el pie abajo al centro
 ```ts
 renderPiece({ kind: 'moon', seed: 3, palette: 'garden-night', phase: 0.25 })
 renderPiece({ kind: 'lantern', seed: 8, palette: 'garden', colors: 'css' })
+renderPiece({ kind: 'cage-lantern', seed: 5, palette: 'garden-night', layer: 'glass' })
+renderPiece({ kind: 'sprig', seed: 2, palette: 'garden', displayWidth: 60 })
 ```
 
 - `kind`: `sun`, `moon`, `tuft`, `daisy`, `stone`, `bush`, `leaf`, `cypress`,
-  `round-tree`, `hills`, `trail` o `lantern`.
+  `round-tree`, `hills`, `trail`, `lantern`, `cage-lantern`, `boulder`,
+  `stone-cluster`, `grass-clump`, `bed`, `sprig`, `cypress-group`, `shrub` o
+  `broad-tree`.
 - **Luna**: `phase` de 0 a 1 (0 nueva, 0,25 cuarto creciente, 0,5 llena), vista
-  desde el hemisferio norte.
+  desde el hemisferio norte. `maria: true` agrega unas manchas planas sobre
+  la parte iluminada.
 - **Farol**: de pie, de papel colgado o de piedra; en `renderPiece` la semilla
   elige. A mano, `lantern(p, base, alto, { ink, body, glass }, { style, layer })`
   fija el estilo (`post`, `paper` o `stone`) y dibuja una sola capa (`fill`,
   `glass` o `ink`) con la misma geometría, para encender el vidrio de noche.
+- **Farol de vela** (`cage-lantern`): marco de metal, cuatro vidrios, techo
+  en punta y aro, con una vela adentro. `lit` (por defecto true) enciende la
+  llama; `layer` dibuja solo `halo`, `fill`, `glass` o `ink`. Apiladas en ese
+  orden dan el dibujo entero, para teñir aparte el vidrio y el halo.
+- **Canto rodado** (`boulder`) y **grupo de piedras** (`stone-cluster`):
+  piedras redondeadas con un plano superior más claro, medio hundidas; el
+  grupo suma pasto y a veces margaritas (`count`, `flowers`, `density`).
+- **Mata de pasto** (`grass-clump`): hojas anchas y finas en abanico
+  (`density`).
+- **Cantero** (`bed`): una mancha de tierra en perspectiva, para poner debajo
+  de las plantas. Va centrado en su lienzo; `ratio` fija alto / ancho y `rim`
+  agrega piedritas en el borde.
+- **Rama** (`sprig`): una rama fina solo de línea, en el color de la tinta,
+  hecha para ir junto a un nombre a 60–90 px.
+- **Grupo de cipreses**, **arbusto** y **árbol ancho**: siluetas para el borde
+  de un bosque en el horizonte (`count` para los cipreses).
 - **Cerros**: cada capa usa el mismo color con menos opacidad mientras más
   lejos, así un solo rol los tiñe a cualquier hora.
 
 Las funciones de cada pieza (`daisy`, `stone`, `bush`, `bigLeaf`, `cypress`,
-`roundTree`, `hills`, `trail`, `lantern`, `horizon`, `tuft`, `stream`, `sun`,
-`moon`) también están exportadas para componer a mano: reciben un `pen(seed)`,
+`roundTree`, `hills`, `trail`, `lantern`, `cageLantern`, `boulder`,
+`stoneCluster`, `grassClump`, `bed`, `sprig`, `cypressGroup`, `shrub`,
+`broadTree`, `horizon`, `tuft`, `stream`, `sun`, `moon`) también están
+exportadas para componer a mano: reciben un `pen(seed)`,
 la geometría y los colores.
 
 ### Suelo y composición

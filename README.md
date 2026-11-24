@@ -90,7 +90,9 @@ every SVG carries it in its `data-seed` attribute.
 - **Standalone motifs**: a single plant cropped to its bounding box, with its
   anchor point.
 - **Garden pieces**: sun, moon with phases, grass tufts, daisy, stone, bush,
-  large leaf, cypress, round tree, hills, trail and lantern.
+  large leaf, cypress, round tree, hills, trail and lantern; a framed candle
+  lantern, boulders and stone clusters, grass clumps, a bed of soil, a
+  botanical sprig, cypress groups, shrubs and a broad tree.
 - **Growth**: the same plant from sprout to flower (`growth`).
 - **Colors as CSS variables**, to retint live without redrawing.
 - **Pen weight tuned to the final size** and configurable **registration**
@@ -149,23 +151,45 @@ A single garden piece, each on its own canvas (`PIECE_CANVAS`, adjustable with
 ```ts
 renderPiece({ kind: 'moon', seed: 3, palette: 'garden-night', phase: 0.25 })
 renderPiece({ kind: 'lantern', seed: 8, palette: 'garden', colors: 'css' })
+renderPiece({ kind: 'cage-lantern', seed: 5, palette: 'garden-night', layer: 'glass' })
+renderPiece({ kind: 'sprig', seed: 2, palette: 'garden', displayWidth: 60 })
 ```
 
 - `kind`: `sun`, `moon`, `tuft`, `daisy`, `stone`, `bush`, `leaf`, `cypress`,
-  `round-tree`, `hills`, `trail` or `lantern`.
+  `round-tree`, `hills`, `trail`, `lantern`, `cage-lantern`, `boulder`,
+  `stone-cluster`, `grass-clump`, `bed`, `sprig`, `cypress-group`, `shrub` or
+  `broad-tree`.
 - **Moon**: `phase` from 0 to 1 (0 new, 0.25 first quarter, 0.5 full), as seen
-  from the northern hemisphere.
+  from the northern hemisphere. `maria: true` adds a few flat patches on the
+  lit part.
 - **Lantern**: standing, hanging paper or stone; in `renderPiece` the seed
   picks the style. By hand,
   `lantern(p, base, height, { ink, body, glass }, { style, layer })` sets the
   style (`post`, `paper` or `stone`) and draws a single layer (`fill`, `glass`
   or `ink`) with the same geometry, so the glass can be lit at night.
+- **Cage lantern**: a metal frame, four panes, a pointed roof and a ring,
+  with a candle inside. `lit` (default true) lights the flame; `layer` draws
+  only `halo`, `fill`, `glass` or `ink`. Stacked in that order they give the
+  whole drawing, so the glass and the halo can be tinted apart.
+- **Boulder** and **stone cluster**: rounded stones with a lighter flat plane
+  on top, half sunk in the ground; the cluster adds grass and maybe daisies
+  (`count`, `flowers`, `density`).
+- **Grass clump**: broad and thin blades in a fan (`density`).
+- **Bed**: a patch of soil seen in perspective, to lie under plants. It is
+  centered on its canvas; `ratio` sets height / width and `rim` adds small
+  stones along its edge.
+- **Sprig**: a thin branch in line only, in the ink color, made to sit beside
+  a name at 60–90 px.
+- **Cypress group**, **shrub** and **broad tree**: silhouettes for the edge of
+  a wood on the horizon (`count` for the cypresses).
 - **Hills**: every layer uses the same color with less opacity the farther
   away it is, so a single role tints them at any time of day.
 
 The function behind each piece (`daisy`, `stone`, `bush`, `bigLeaf`,
-`cypress`, `roundTree`, `hills`, `trail`, `lantern`, `horizon`, `tuft`,
-`stream`, `sun`, `moon`) is also exported for composing by hand: each takes a
+`cypress`, `roundTree`, `hills`, `trail`, `lantern`, `cageLantern`,
+`boulder`, `stoneCluster`, `grassClump`, `bed`, `sprig`, `cypressGroup`,
+`shrub`, `broadTree`, `horizon`, `tuft`, `stream`, `sun`, `moon`) is also
+exported for composing by hand: each takes a
 `pen(seed)`, the geometry and the colors.
 
 ### Ground and composition
