@@ -91,7 +91,8 @@ cada SVG la lleva en su atributo `data-seed`.
 - **Piezas de jardín**: sol, luna con fase, matas, margarita, piedra, mata,
   hoja grande, ciprés, árbol redondo, cerros, camino y farol; un farol de vela
   con marco, cantos rodados y grupos de piedras, matas de pasto, un cantero,
-  una rama botánica, grupos de cipreses, arbustos y un árbol ancho.
+  una rama botánica y una rama en abanico más llena, grupos de cipreses,
+  arbustos y un árbol ancho.
 - **Crecimiento**: la misma planta de brote a flor (`growth`).
 - **Color por variables CSS**, para teñir en vivo sin volver a dibujar.
 - **Pluma según el tamaño final** y **registro** configurable entre color y
@@ -151,12 +152,13 @@ renderPiece({ kind: 'moon', seed: 3, palette: 'garden-night', phase: 0.25 })
 renderPiece({ kind: 'lantern', seed: 8, palette: 'garden', colors: 'css' })
 renderPiece({ kind: 'cage-lantern', seed: 5, palette: 'garden-night', layer: 'glass' })
 renderPiece({ kind: 'sprig', seed: 2, palette: 'garden', displayWidth: 60 })
+renderPiece({ kind: 'fan-sprig', seed: 4821, palette: 'garden', side: 1, displayWidth: 64 })
 ```
 
 - `kind`: `sun`, `moon`, `tuft`, `daisy`, `stone`, `bush`, `leaf`, `cypress`,
   `round-tree`, `hills`, `trail`, `lantern`, `cage-lantern`, `boulder`,
-  `stone-cluster`, `grass-clump`, `bed`, `sprig`, `cypress-group`, `shrub` o
-  `broad-tree`.
+  `stone-cluster`, `grass-clump`, `bed`, `sprig`, `cypress-group`, `shrub`,
+  `broad-tree` o `fan-sprig`.
 - **Luna**: `phase` de 0 a 1 (0 nueva, 0,25 cuarto creciente, 0,5 llena), vista
   desde el hemisferio norte. `maria: true` agrega unas manchas planas sobre
   la parte iluminada.
@@ -178,6 +180,16 @@ renderPiece({ kind: 'sprig', seed: 2, palette: 'garden', displayWidth: 60 })
   agrega piedritas en el borde.
 - **Rama** (`sprig`): una rama fina solo de línea, en el color de la tinta,
   hecha para ir junto a un nombre a 60–90 px.
+- **Rama en abanico** (`fan-sprig`): la rama de firma, más llena. Un tallo
+  curvo con hojas anchas y en punta a ambos lados que se abren en abanico, la
+  mayoría con nervadura central y algunas con unas nervaduras cortas; solo
+  línea, en el color de la tinta. La semilla elige el número de hojas, la
+  curva y cuánto se abren; `side` (1 o -1) fija hacia dónde se inclina y
+  `leaves` fija cuántas hojas. Se lee de ~45 px a ~90 px de alto: bajo ~56 px
+  deja fuera las nervaduras laterales. A mano,
+  `fanSprig(pen(seed), base, alto, color, { side, leaves, spread, veins, fill, displayHeight })`
+  acepta cualquier color y `displayHeight` (los px de alto a los que se
+  muestra) mantiene la línea sobre ~1 px.
 - **Grupo de cipreses**, **arbusto** y **árbol ancho**: siluetas para el borde
   de un bosque en el horizonte (`count` para los cipreses).
 - **Cerros**: cada capa usa el mismo color con menos opacidad mientras más
@@ -185,7 +197,7 @@ renderPiece({ kind: 'sprig', seed: 2, palette: 'garden', displayWidth: 60 })
 
 Las funciones de cada pieza (`daisy`, `stone`, `bush`, `bigLeaf`, `cypress`,
 `roundTree`, `hills`, `trail`, `lantern`, `cageLantern`, `boulder`,
-`stoneCluster`, `grassClump`, `bed`, `sprig`, `cypressGroup`, `shrub`,
+`stoneCluster`, `grassClump`, `bed`, `sprig`, `fanSprig`, `cypressGroup`, `shrub`,
 `broadTree`, `horizon`, `tuft`, `stream`, `sun`, `moon`) también están
 exportadas para componer a mano: reciben un `pen(seed)`,
 la geometría y los colores.

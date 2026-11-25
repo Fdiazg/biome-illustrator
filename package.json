@@ -1,6 +1,6 @@
 {
   "name": "biome-illustrator",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Generative SVG illustration engine, deterministic by seed: plants, trees, clouds and landscapes with a hand-drawn pen stroke.",
   "keywords": [
     "svg",
@@ -67,7 +67,8 @@
     "snapshot": "tsx scripts/snapshot.ts",
     "prepublishOnly": "pnpm run typecheck && pnpm run audit && pnpm run snapshot && pnpm run build:lib",
     "gallery": "tsx scripts/gallery.ts",
-    "review": "tsx scripts/review.ts"
+    "review": "tsx scripts/review.ts",
+    "review:sprig": "tsx scripts/review-sprig.ts"
   },
   "peerDependencies": {
     "react": ">=18"

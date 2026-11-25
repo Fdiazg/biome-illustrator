@@ -92,7 +92,8 @@ every SVG carries it in its `data-seed` attribute.
 - **Garden pieces**: sun, moon with phases, grass tufts, daisy, stone, bush,
   large leaf, cypress, round tree, hills, trail and lantern; a framed candle
   lantern, boulders and stone clusters, grass clumps, a bed of soil, a
-  botanical sprig, cypress groups, shrubs and a broad tree.
+  botanical sprig and a fuller fan sprig, cypress groups, shrubs and a broad
+  tree.
 - **Growth**: the same plant from sprout to flower (`growth`).
 - **Colors as CSS variables**, to retint live without redrawing.
 - **Pen weight tuned to the final size** and configurable **registration**
@@ -153,12 +154,13 @@ renderPiece({ kind: 'moon', seed: 3, palette: 'garden-night', phase: 0.25 })
 renderPiece({ kind: 'lantern', seed: 8, palette: 'garden', colors: 'css' })
 renderPiece({ kind: 'cage-lantern', seed: 5, palette: 'garden-night', layer: 'glass' })
 renderPiece({ kind: 'sprig', seed: 2, palette: 'garden', displayWidth: 60 })
+renderPiece({ kind: 'fan-sprig', seed: 4821, palette: 'garden', side: 1, displayWidth: 64 })
 ```
 
 - `kind`: `sun`, `moon`, `tuft`, `daisy`, `stone`, `bush`, `leaf`, `cypress`,
   `round-tree`, `hills`, `trail`, `lantern`, `cage-lantern`, `boulder`,
-  `stone-cluster`, `grass-clump`, `bed`, `sprig`, `cypress-group`, `shrub` or
-  `broad-tree`.
+  `stone-cluster`, `grass-clump`, `bed`, `sprig`, `cypress-group`, `shrub`,
+  `broad-tree` or `fan-sprig`.
 - **Moon**: `phase` from 0 to 1 (0 new, 0.25 first quarter, 0.5 full), as seen
   from the northern hemisphere. `maria: true` adds a few flat patches on the
   lit part.
@@ -180,6 +182,15 @@ renderPiece({ kind: 'sprig', seed: 2, palette: 'garden', displayWidth: 60 })
   stones along its edge.
 - **Sprig**: a thin branch in line only, in the ink color, made to sit beside
   a name at 60–90 px.
+- **Fan sprig**: the fuller signature branch. A curved stem with broad,
+  pointed leaves on both sides that fan out from it, most with a midrib and
+  some with a few short veins; line only, in the ink color. The seed picks the
+  number of leaves, the curve and how wide they open; `side` (1 or -1) sets
+  where it leans and `leaves` fixes the count. Legible from ~45 px to ~90 px
+  tall: below ~56 px it drops the lateral veins. By hand,
+  `fanSprig(pen(seed), base, height, color, { side, leaves, spread, veins, fill, displayHeight })`
+  takes any color and `displayHeight` (the px height it is shown at) keeps
+  the line above ~1 px.
 - **Cypress group**, **shrub** and **broad tree**: silhouettes for the edge of
   a wood on the horizon (`count` for the cypresses).
 - **Hills**: every layer uses the same color with less opacity the farther
@@ -187,8 +198,8 @@ renderPiece({ kind: 'sprig', seed: 2, palette: 'garden', displayWidth: 60 })
 
 The function behind each piece (`daisy`, `stone`, `bush`, `bigLeaf`,
 `cypress`, `roundTree`, `hills`, `trail`, `lantern`, `cageLantern`,
-`boulder`, `stoneCluster`, `grassClump`, `bed`, `sprig`, `cypressGroup`,
-`shrub`, `broadTree`, `horizon`, `tuft`, `stream`, `sun`, `moon`) is also
+`boulder`, `stoneCluster`, `grassClump`, `bed`, `sprig`, `fanSprig`,
+`cypressGroup`, `shrub`, `broadTree`, `horizon`, `tuft`, `stream`, `sun`, `moon`) is also
 exported for composing by hand: each takes a
 `pen(seed)`, the geometry and the colors.
 

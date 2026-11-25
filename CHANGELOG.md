@@ -4,6 +4,22 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). While the package is
 at `0.x`, the API may change between minor versions.
 
+## [0.3.0]
+
+A fuller signature branch, opt-in: every existing plate and piece draws the
+same SVG as in 0.2.0 (`ENGINE_VERSION` stays at 3).
+
+### Added
+
+- `fan-sprig` (`fanSprig`): a curved stem with broad, pointed leaves on both
+  sides that fan out from it, in line only and one color. The seed varies the
+  number of leaves, the curve and the opening; `side` sets where it leans,
+  `leaves` and `spread` can be fixed, and `displayHeight` keeps it legible
+  from ~45 px to ~90 px tall (the lateral veins drop below ~56 px).
+- `renderPiece` options `side` and `leaves` for the fan sprig.
+- `pnpm run review:sprig`: a PNG sheet of the fan sprig beside a name, on a
+  day and a night paper, next to the 0.2.0 sprig.
+
 ## [0.2.0]
 
 New garden pieces, all opt-in: every existing plate and piece draws the same
