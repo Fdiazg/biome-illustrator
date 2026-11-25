@@ -760,6 +760,167 @@ export function sprig(p: Pen, base: Pt, height: number, color: string, o: SprigO
 }
 
 // ---------------------------------------------------------------------------
+// Fan sprig: the same signature branch, fuller. A curved stem with broad,
+// pointed leaves on both sides that fan out from it: wide open low down,
+// closing up toward the tip leaf. Each leaf is a closed outline; most carry a
+// midrib and some a few short veins. One color, line only. `displayHeight`
+// keeps the pen legible from ~45 px (phone) to ~90 px, and drops the lateral
+// veins when the branch is shown very small.
+// ---------------------------------------------------------------------------
+
+export interface FanSprigOptions {
+  /** leaves, tip included: 4..11. Default by seed (5..7) */
+  leaves?: number
+  /** 1 leans and opens to the right, -1 to the left. Default 1 */
+  side?: 1 | -1
+  /** how wide the leaves fan out from the stem, 0..1. Default by seed */
+  spread?: number
+  /** short lateral veins on some leaves. Default true (off below ~56 px) */
+  veins?: boolean
+  /** fill of the leaves, each one covering the ones under it. Default none (line only) */
+  fill?: string
+  /** opacity of that fill. Default 1 */
+  fillOpacity?: number
+  /** height in px it will be shown at: thickens the pen to stay legible */
+  displayHeight?: number
+}
+
+/** Half width of the fan sprig's blade along its axis (0 base .. 1 tip): widest a little under the middle, a drawn-out point. */
+const BLADE_PEAK = (() => {
+  let m = 0
+  for (let i = 0; i <= 200; i++) m = Math.max(m, Math.pow(i / 200 + 0.02, 0.9) * Math.pow(1 - i / 200, 1.25))
+  return m
+})()
+const bladeWidth = (s: number) => (Math.pow(Math.max(0, s) + 0.02, 0.9) * Math.pow(Math.max(0, 1 - s), 1.25)) / BLADE_PEAK
+
+/** Closed outline of a pointed blade around `spine`, one side a little wider. */
+function blade(spine: Pt[], half: number, asym: number): Pt[] {
+  const last = spine.length - 1
+  const left: Pt[] = []
+  const right: Pt[] = []
+  for (let i = 0; i <= last; i++) {
+    const a = spine[Math.max(0, i - 1)]
+    const b = spine[Math.min(last, i + 1)]
+    const l = Math.hypot(b.x - a.x, b.y - a.y) || 1
+    const n = { x: -(b.y - a.y) / l, y: (b.x - a.x) / l }
+    const h = half * bladeWidth(i / last)
+    left.push({ x: spine[i].x + n.x * h * (1 + asym), y: spine[i].y + n.y * h * (1 + asym) })
+    right.push({ x: spine[i].x - n.x * h * (1 - asym), y: spine[i].y - n.y * h * (1 - asym) })
+  }
+  return [...left, ...right.reverse().slice(1)]
+}
+
+export function fanSprig(p: Pen, base: Pt, height: number, color: string, o: FanSprigOptions = {}): string {
+  const { rng, noise } = p
+  const side = o.side ?? 1
+  const nLeaves = Math.max(4, Math.min(11, Math.round(o.leaves ?? rng.int(5, 7))))
+  const spread = Math.max(0, Math.min(1, o.spread ?? rng.range(0.25, 0.85)))
+  const shown = o.displayHeight && o.displayHeight > 0 ? o.displayHeight : undefined
+  const k = height / 100
+  let w = 1.2 * Math.sqrt(k)
+  // px per unit at the size it is shown: at least ~1.05 px of line, a touch less when tiny
+  if (shown) w = Math.max(w, (shown < 60 ? 0.95 : 1.05) / (shown / height))
+  const veins = o.veins !== false && !(shown && shown < 56)
+  const ph = rng.range(0, 9)
+
+  // the stem: leaves the foot on a diagonal and straightens toward the tip;
+  // it stops short of `height` so the tip leaf ends near the top
+  const sh = height * 0.8
+  const lean = rng.range(0.3, 0.44)
+  const tip = { x: base.x + side * sh * lean, y: base.y - sh * rng.range(0.93, 0.99) }
+  const c1 = { x: base.x + side * sh * lean * rng.range(0.45, 0.7), y: base.y - sh * rng.range(0.22, 0.32) }
+  const c2 = { x: tip.x - side * sh * rng.range(-0.02, 0.06), y: tip.y + sh * rng.range(0.3, 0.4) }
+  const stem: Pt[] = []
+  for (let i = 0; i <= 48; i++) stem.push(cubicPoint(base, c1, c2, tip, i / 48))
+  const last = stem.length - 1
+  const tangentAt = (j: number) => {
+    const a = stem[Math.max(0, j - 1)]
+    const b = stem[Math.min(last, j + 1)]
+    return Math.atan2(b.y - a.y, b.x - a.x)
+  }
+
+  // one leaf: short petiole, blade, maybe a midrib and veins; outline last
+  const leaf = (i: number, foot: Pt, angle: number, len: number, bend: number, half: number, rib: boolean, withVeins: boolean) => {
+    const stalk = len * 0.07
+    const lb = { x: foot.x + Math.cos(angle) * stalk, y: foot.y + Math.sin(angle) * stalk }
+    const lt = { x: foot.x + Math.cos(angle) * len, y: foot.y + Math.sin(angle) * len }
+    const spine = wobble(leafSpine(lb, lt, bend, 28), w * 0.1, noise, 0.3, ph + i * 3)
+    const outline = blade(spine, half, rng.range(-0.08, 0.08))
+    const sl = spine.length - 1
+    let s = ''
+    if (o.fill) s += fillPath(polyline(outline, true), o.fill, alpha(o.fillOpacity ?? 1))
+    s += fillPath(tapered([foot, lb], () => w * 0.7), color)
+    if (rib) {
+      // from the base, fading before the tip
+      s += fillPath(tapered(spine.slice(0, Math.round(sl * rng.range(0.76, 0.88))), (t) => w * 0.48 * (1 - 0.65 * t)), color)
+      if (withVeins) {
+        const pairs = rng.int(2, 3)
+        let d = ''
+        for (let v = 0; v < pairs; v++) {
+          const t = 0.24 + (0.46 * (v + 0.5)) / pairs
+          const j = Math.round(t * sl)
+          const q = spine[j]
+          const a = spine[Math.max(0, j - 1)]
+          const b = spine[Math.min(sl, j + 1)]
+          const tl = Math.hypot(b.x - a.x, b.y - a.y) || 1
+          const tx = (b.x - a.x) / tl
+          const ty = (b.y - a.y) / tl
+          const hw = half * bladeWidth(t)
+          for (const sd of [-1, 1]) {
+            if (rng.chance(0.3)) continue // a vein missing here and there
+            const reach = hw * rng.range(0.5, 0.72)
+            const end = { x: q.x - ty * sd * reach + tx * reach * 1.1, y: q.y + tx * sd * reach + ty * reach * 1.1 }
+            d += `M${num(q.x)} ${num(q.y)}L${num(end.x)} ${num(end.y)}`
+          }
+        }
+        if (d) s += `<path d="${d}" fill="none" stroke="${color}" stroke-width="${num(w * 0.34)}" stroke-linecap="round"/>`
+      }
+    }
+    s += fillPath(ring(p, outline, w * 0.82, ph + i * 1.9, w * 1.1), color)
+    return s
+  }
+
+  // lateral leaves, alternate on both sides; the lowest open widest
+  const lateral = nLeaves - 1
+  const t0 = rng.range(0.15, 0.23)
+  const t1 = rng.range(0.72, 0.8)
+  const first = rng.chance(0.5) ? 1 : -1
+  const parts: { y: number; s: string }[] = []
+  for (let i = 0; i < lateral; i++) {
+    const u = lateral === 1 ? 0.5 : i / (lateral - 1)
+    const t = lerp(t0, t1, u) + rng.range(-0.025, 0.025)
+    const j = Math.max(1, Math.min(last - 1, Math.round(t * last)))
+    const foot = stem[j]
+    const screen = (i % 2 === 0 ? 1 : -1) * first // which side of the stem, on screen
+    // angle from straight up: wide at the foot, closing toward the tip, half following the stem
+    const up = -Math.PI / 2
+    const lift = (tangentAt(j) - up) * 0.5
+    const open = lerp(lerp(1.0, 1.35, spread), lerp(0.5, 0.75, spread), t) + rng.range(-0.1, 0.1)
+    let a = up + lift + screen * open
+    a = Math.max(up - 1.4, Math.min(up + 1.4, a)) // never droops below level
+    // biggest a little under the middle, smaller at the foot and near the tip
+    const size = 0.8 + 0.3 * Math.sin(Math.PI * Math.min(1, (t - 0.05) / 0.85))
+    const len = sh * rng.range(0.34, 0.41) * size
+    const half = len * rng.range(0.19, 0.23)
+    // the blade arches a little, its tip turning up
+    const bend = -screen * rng.range(0.04, 0.14)
+    const rib = rng.chance(0.75)
+    parts.push({ y: foot.y, s: leaf(i, foot, a, len, bend, half, rib, veins && rng.chance(0.6)) })
+  }
+  // the tip leaf continues the stem
+  const end = stem[last]
+  const tipLen = sh * rng.range(0.2, 0.25)
+  const tipLeaf = leaf(lateral, end, tangentAt(last - 1) + rng.range(-0.12, 0.12), tipLen, side * rng.range(-0.08, 0.08), tipLen * rng.range(0.19, 0.22), true, veins && rng.chance(0.4))
+
+  let out = fillPath(tapered(wobble(stem, w * 0.1, noise, 0.25, ph), (t) => w * (1.3 - 0.7 * t)), color)
+  // with a fill, the lower leaves go under the upper ones
+  parts.sort((a, b) => b.y - a.y)
+  out += parts.map((q) => q.s).join('')
+  out += tipLeaf
+  return out
+}
+
+// ---------------------------------------------------------------------------
 // The edge of a wood, for the horizon: a group of cypresses of different
 // heights, a low round shrub, and a broad tree whose crown is a cloud of
 // clumps. Seen from far: a clear silhouette, few marks inside.

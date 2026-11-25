@@ -75,6 +75,7 @@ export {
   grassClump,
   bed,
   sprig,
+  fanSprig,
   cypressGroup,
   shrub,
   broadTree,
@@ -90,6 +91,7 @@ export {
   type BedColors,
   type BedOptions,
   type SprigOptions,
+  type FanSprigOptions,
   type CypressGroupOptions,
 } from './subjects/garden/details'
 export {

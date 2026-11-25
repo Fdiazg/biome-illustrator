@@ -117,4 +117,5 @@ export const PIECE_GATES: Record<MotifPieceKind, QualityGate> = {
   'cypress-group': { minPaths: 15, minTones: 2, minVariation: 0.7, minCoverage: 0.4 },
   shrub: { minPaths: 6, minTones: 2, minVariation: 0.7, minCoverage: 0.5 },
   'broad-tree': { minPaths: 8, minTones: 2, minVariation: 0.7, minCoverage: 0.55 },
+  'fan-sprig': { minPaths: 16, minTones: 1, minVariation: 0.7, minCoverage: 0.55 },
 }

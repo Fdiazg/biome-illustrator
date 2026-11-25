@@ -2,7 +2,8 @@
 // garden/piece — a garden piece as a loose SVG: sun, moon, tuft and the
 // garden motifs (daisy, stone, bush, big leaf, cypress, round tree, hills,
 // trail, lantern), and the second set (cage lantern, boulder, stone cluster,
-// grass clump, bed, sprig, cypress group, shrub, broad tree).
+// grass clump, bed, sprig, cypress group, shrub, broad tree), and the fan
+// sprig.
 //
 // For when the page wants each piece on its own layer (the sky body to move
 // it by the hour, a stone to sow it on the ground) instead of inside
@@ -19,7 +20,7 @@ import { resolvePalette, type Palette, type PaletteId } from '../../core/palette
 import { finishSvg, ENGINE_VERSION, type ColorMode } from '../../render'
 import { bigLeaf, bush, cypress, daisy, hills, lantern, roundTree, stone, trail } from './motifs'
 import { moon, pen, sun, tuft } from './pieces'
-import { bed, boulder, broadTree, cageLantern, cypressGroup, grassClump, shrub, sprig, stoneCluster, type CageLanternLayer } from './details'
+import { bed, boulder, broadTree, cageLantern, cypressGroup, fanSprig, grassClump, shrub, sprig, stoneCluster, type CageLanternLayer } from './details'
 import { lum, mix } from '../dunes/tone'
 
 export type PieceKind =
@@ -44,6 +45,7 @@ export type PieceKind =
   | 'cypress-group'
   | 'shrub'
   | 'broad-tree'
+  | 'fan-sprig'
 
 /** The garden motifs: pieces with their own canvas and quality gate. */
 export type MotifPieceKind = Exclude<PieceKind, 'sun' | 'moon' | 'tuft'>
@@ -67,6 +69,7 @@ export const MOTIF_PIECES: readonly MotifPieceKind[] = [
   'cypress-group',
   'shrub',
   'broad-tree',
+  'fan-sprig',
 ]
 
 export interface PieceOptions {
@@ -98,6 +101,10 @@ export interface PieceOptions {
   count?: number
   /** stone cluster: daisies (0..3). Default by seed */
   flowers?: number
+  /** fan sprig: 1 leans and opens to the right, -1 to the left. Default 1 */
+  side?: 1 | -1
+  /** fan sprig: leaves, tip included (5..11). Default by seed */
+  leaves?: number
   colors?: ColorMode
   /** final width in px: thickens the pen if small */
   displayWidth?: number
@@ -123,12 +130,16 @@ export const PIECE_CANVAS: Record<MotifPieceKind, { width: number; height: numbe
   'cypress-group': { width: 200, height: 240 },
   shrub: { width: 220, height: 120 },
   'broad-tree': { width: 260, height: 260 },
+  'fan-sprig': { width: 120, height: 150 },
 }
 
 /** Foot of a standing piece on its canvas. */
 export const pieceFoot = (width: number, height: number) => ({ x: width / 2, y: height * 0.96 })
 
-type PieceExtras = Pick<PieceOptions, 'lit' | 'layer' | 'ratio' | 'rim' | 'density' | 'count' | 'flowers'>
+type PieceExtras = Pick<PieceOptions, 'lit' | 'layer' | 'ratio' | 'rim' | 'density' | 'count' | 'flowers' | 'side' | 'leaves'> & {
+  /** height in px it will be shown at, when known */
+  shown?: number
+}
 
 function motifBody(kind: MotifPieceKind, seed: number, pal: Palette, W: number, H: number, x: PieceExtras = {}): string {
   const p = pen(seed)
@@ -206,6 +217,15 @@ function motifBody(kind: MotifPieceKind, seed: number, pal: Palette, W: number, 
       return shrub(p, foot, W * p.rng.range(0.8, 0.92), H * p.rng.range(0.62, 0.85), pal.ink, pal.shade)
     case 'broad-tree':
       return broadTree(p, foot, H * p.rng.range(0.82, 0.92), pal.ink, pal.shade)
+    case 'fan-sprig': {
+      const side = x.side ?? 1
+      // the foot sits off center, away from where it leans; the veins go when it is shown tiny
+      return fanSprig(p, { x: W / 2 - side * H * 0.16, y: foot.y }, H * 0.92, pal.ink, {
+        side,
+        leaves: x.leaves,
+        veins: x.shown === undefined || x.shown >= 56,
+      })
+    }
   }
 }
 
@@ -237,7 +257,7 @@ export function renderPiece(opts: PieceOptions): string {
     const wide = opts.width ?? opts.size
     W = wide ?? def.width
     H = opts.height ?? (wide !== undefined ? (W * def.height) / def.width : def.height)
-    body = motifBody(opts.kind, seed, pal, W, H, opts)
+    body = motifBody(opts.kind, seed, pal, W, H, { ...opts, shown: dw ? (dw * H) / W : undefined })
   }
 
   const svg =
